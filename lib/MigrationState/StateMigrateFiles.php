@@ -171,7 +171,13 @@ class StateMigrateFiles implements State {
 			$cmd = [
 				self::$rclone_bin,
 				'sync',
-				$params['insecure'] ? '--no-check-certificate' : '',
+			];
+
+			if ($params['insecure']) {
+				$cmd[] = '--no-check-certificate';
+			}
+			
+			$cmd = array_merge($cmd, [
 				'--create-empty-src-dirs',
 				'--ignore-case',
 				'--ignore-case-sync',
@@ -181,7 +187,8 @@ class StateMigrateFiles implements State {
 				'-v',
 				"$oc10_connection:/",
 				"$ocis_connection:/ownCloud",
-			];
+			]);
+
 			$verified = true;
 			// TODO: ProcessOutputLineProcessor should be injected
 			$lp = new ProcessOutputLineProcessor(function ($type, $line) use (&$verified, $user, $conflictLogFile, $params) {
